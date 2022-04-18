@@ -1,7 +1,7 @@
 import textfsm
 from netmiko import ConnectHandler
 
-with open('mikrotikSanTon.txt.txt', 'r') as f:
+with open('mikrotikSanTon.txt', 'r') as f:
     listMikrotik = f.readlines()
 for ipOfMikrotik in listMikrotik:
     mikrotik_router_1 = {
@@ -13,13 +13,10 @@ for ipOfMikrotik in listMikrotik:
     }
     mikrotik_router_1 ["host"] = ipOfMikrotik
     sshCli = ConnectHandler(**mikrotik_router_1)
-    #print(sshCli.find_prompt())
     output = sshCli.send_command("/ip address print")
-    #print(output)
     with open('gucci.template.txt') as template:
         fsm = textfsm.TextFSM(template)
         result = fsm.ParseText(output)
-    #print(tabulate(result, headers=['Interface', 'State'], tablefmt='orgtbl'))
     if not result:
         print(mikrotik_router_1.get("host") + " Этот микротик не имеет 192.168.x.y/zz или не доступен!")
     else:
